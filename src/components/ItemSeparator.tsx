@@ -1,8 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, StyleProp, ViewStyle} from 'react-native';
 import React from 'react';
 
-export default function ItemSeparator() {
-  return <View style={styles.separatorView} />;
+interface Props {
+  style?: StyleProp<ViewStyle>;
+}
+
+export default function ItemSeparator({style = {}}: Props) {
+  return <View style={{...styles.separatorView, ...(style as any)}} />;
 }
 
 const styles = StyleSheet.create({

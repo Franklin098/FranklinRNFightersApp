@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParams} from '../navigation/StackNavigator';
@@ -17,11 +17,18 @@ import useFighters from '../hooks/useFighters';
 import LoadingIndicator from '../components/LoadingIndicator';
 import FighterCard from '../components/FighterCard';
 import ItemSeparator from '../components/ItemSeparator';
+import {useAppSelector, useAppDisptatch} from '../reducers/hooks';
+import {callFightersAPI} from '../reducers/fighters/middlewares';
 
 export default function HomeScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const {isLoading: universesLoading, universeList} = useUniverses();
-  const {isLoading: fightersLoading, fighterList} = useFighters();
+  const fighters = useAppSelector(state => state.fighters);
+  const dispatch = useAppDisptatch();
+
+  useEffect(() => {
+    dispatch(callFightersAPI());
+  }, []);
 
   function renderUniversesSection() {
     if (universesLoading) {
@@ -33,6 +40,11 @@ export default function HomeScreen() {
         keyExtractor={item => item.objectID}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        ListHeaderComponent={() => (
+          <TouchableOpacity style={styles.universeButton}>
+            <Text style={styles.universeText}>All</Text>
+          </TouchableOpacity>
+        )}
         renderItem={({item}) => (
           <TouchableOpacity style={styles.universeButton}>
             <Text style={styles.universeText}>{item.name}</Text>
@@ -43,12 +55,12 @@ export default function HomeScreen() {
   }
 
   function renderFightersSection() {
-    if (fightersLoading) {
+    if (fighters.isLoading) {
       return <LoadingIndicator />;
     }
     return (
       <FlatList
-        data={fighterList}
+        data={fighters.visibleList}
         keyExtractor={(item, index) => item.objectID + index}
         showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => (
@@ -90,6 +102,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     paddingHorizontal: 10,
     borderRadius: 2,
+    minWidth: 80,
   },
   universeText: {
     color: globalColors.white,

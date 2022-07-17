@@ -1,10 +1,14 @@
 import {StyleSheet, Platform} from 'react-native';
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import globalColors from '../theme/globalColors';
 import FiltersScreen from '../screens/FiltersScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useNavigation} from '@react-navigation/native';
 
 export type RootStackParams = {
   HomeScreen: undefined;
@@ -16,6 +20,7 @@ const Stack = createStackNavigator<RootStackParams>();
 export default function StackNavigator() {
   const isIOS = Platform.OS === 'ios';
   const headerStyles = isIOS ? iosStyles : androidStyles;
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
 
   return (
     <Stack.Navigator
@@ -32,6 +37,7 @@ export default function StackNavigator() {
             size={25}
             color={isIOS ? globalColors.lightGray : globalColors.white}
             name="filter-outline"
+            onPress={() => navigation.navigate('FiltersScreen')}
           />
         ),
         headerRightContainerStyle: headerStyles.headerRightContainerStyle,
