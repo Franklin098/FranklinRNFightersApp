@@ -26,7 +26,11 @@ const fightersSlice = createSlice({
       fighters.isLoading = false;
       fighters.isFailure = false;
       fighters.completeList = action.payload.list;
-      fighters.visibleList = [...action.payload.list];
+      const filteredList = getResultAfterFiltersApplied(
+        action.payload.list,
+        fighters.filters,
+      );
+      fighters.visibleList = filteredList;
     },
     filtersChanged: (fighters, action: PayloadAction<FiltersState>) => {
       // apply filters to visible list

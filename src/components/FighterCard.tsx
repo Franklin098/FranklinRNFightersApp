@@ -1,17 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StyleProp,
-  ViewStyle,
-  Image,
-} from 'react-native';
-import React, {useEffect} from 'react';
+import {StyleSheet, Text, View, StyleProp, ViewStyle} from 'react-native';
+import React from 'react';
 import {Fighter} from '../interfaces/FightersApiInterfaces';
 import {globalStyles} from '../theme/globalStyles';
 import {FadeInImage} from './FadeInImage';
-import globalColors from '../theme/globalColors';
 
 interface Props {
   fighter: Fighter;
@@ -20,12 +11,8 @@ interface Props {
 }
 
 export default function FighterCard({fighter, index, style = {}}: Props) {
-  useEffect(() => {
-    return () => {};
-  }, []);
-
   return (
-    <TouchableOpacity
+    <View
       style={{
         ...globalStyles.horizontalMargin,
         ...styles.mainContainer,
@@ -44,7 +31,7 @@ export default function FighterCard({fighter, index, style = {}}: Props) {
         <Text style={styles.dataText}>{`Rate: ${fighter.rate}`}</Text>
         <Text style={styles.dataText}>{`Downloads: ${fighter.downloads}`}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 

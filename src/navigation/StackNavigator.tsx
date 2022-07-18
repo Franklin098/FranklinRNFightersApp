@@ -9,10 +9,14 @@ import globalColors from '../theme/globalColors';
 import FiltersScreen from '../screens/FiltersScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
+import {useAppSelector} from '../reducers/hooks';
+import FighterScreen from '../screens/FighterScreen';
+import {Fighter} from '../interfaces/FightersApiInterfaces';
 
 export type RootStackParams = {
   HomeScreen: undefined;
   FiltersScreen: undefined;
+  FighterScreen: {fighter: Fighter};
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -21,6 +25,21 @@ export default function StackNavigator() {
   const isIOS = Platform.OS === 'ios';
   const headerStyles = isIOS ? iosStyles : androidStyles;
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const {filters} = useAppSelector(state => state.fighters);
+
+  const getUnactiveFilterColor = () => {
+    return isIOS ? globalColors.lightGray : globalColors.white;
+  };
+
+  const getActiveFilterColor = () => {
+    return isIOS ? globalColors.primaryBlue : globalColors.darkBlue;
+  };
+
+  const getFilterColor = () => {
+    return filters.selectedSortKeyName || filters.selectedStarId
+      ? getActiveFilterColor()
+      : getUnactiveFilterColor();
+  };
 
   return (
     <Stack.Navigator
@@ -35,7 +54,7 @@ export default function StackNavigator() {
         headerRight: () => (
           <Icon
             size={25}
-            color={isIOS ? globalColors.lightGray : globalColors.white}
+            color={getFilterColor()}
             name="filter-outline"
             onPress={() => navigation.navigate('FiltersScreen')}
           />
@@ -50,6 +69,13 @@ export default function StackNavigator() {
           headerRight: () => <></>,
         }}
         component={FiltersScreen}
+      />
+      <Stack.Screen
+        name="FighterScreen"
+        component={FighterScreen}
+        options={{
+          headerRight: () => <></>,
+        }}
       />
     </Stack.Navigator>
   );
@@ -71,7 +97,7 @@ const androidStyles = StyleSheet.create({
 
 const iosStyles = StyleSheet.create({
   headerStyle: {
-    height: 130,
+    height: 140,
     backgroundColor: globalColors.white,
   },
   headerLeftContainerStyle: {
@@ -85,7 +111,7 @@ const iosStyles = StyleSheet.create({
   headerTitle: {
     color: globalColors.black,
     fontWeight: '700',
-    fontSize: 25,
+    fontSize: 33,
     marginBottom: 7,
   },
   headerRightContainerStyle: {

@@ -8,12 +8,15 @@ import {
 } from './fighters';
 
 // Middleware
-export function callFightersAPI() {
+export function callFightersAPI(universe: string) {
   return async (dispatch: AppDispatch) => {
     try {
       console.log('Calling fighters API from middleware');
       dispatch(fetchFightersStarted());
-      const resp = await fightersApi.get<Fighter[]>('/fighters');
+      const params = universe == 'All' ? {} : {universe};
+      const resp = await fightersApi.get<Fighter[]>('/fighters', {
+        params,
+      });
       dispatch(fetchFightersSuccess({list: resp.data}));
     } catch (error) {
       console.log('Error calling /fighters API', error);

@@ -72,6 +72,7 @@ export default function FiltersScreen() {
       <Text style={styles.sectionTitle}>FILTER BY</Text>
       {/* Stars Selector */}
       <StarsSelector
+        iconSize={35}
         containerStyle={styles.starsSelector}
         maxStarsNumber={5}
         selectedStarId={selectedStarId}

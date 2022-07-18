@@ -14,9 +14,12 @@ import globalColors from '../theme/globalColors';
 interface Props {
   containerStyle?: StyleProp<ViewStyle>;
   maxStarsNumber: number;
-  onStarSelected: (starId: string) => void;
-  onStarUnselected: (unselectedStarId: string) => void;
+  onStarSelected?: (starId: string) => void;
+  onStarUnselected?: (unselectedStarId: string) => void;
   selectedStarId: string;
+  staticBehaviour?: boolean;
+  iconSize: number;
+  rightIconMargin?: number;
 }
 interface Star {
   id: string;
@@ -33,9 +36,12 @@ function createStarsArray(maxNumber: number): Star[] {
 export default function StarsSelector({
   containerStyle = {},
   maxStarsNumber,
-  onStarSelected,
-  onStarUnselected,
+  onStarSelected = () => {},
+  onStarUnselected = () => {},
   selectedStarId,
+  iconSize,
+  rightIconMargin: iconMargin = iconSize / 2,
+  staticBehaviour = false,
 }: Props) {
   const [starsList, setStarsList] = useState<Star[]>([]);
 
@@ -60,45 +66,39 @@ export default function StarsSelector({
   };
 
   return (
-    <View style={{...styles.container, ...(containerStyle as any)}}>
-      <FlatList
-        contentContainerStyle={styles.starsListContainer}
-        horizontal
-        data={starsList}
-        keyExtractor={item => `${item.id}`}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => handleStarPressed(item)}
-            activeOpacity={0.9}>
-            <Icon
-              name="star"
-              size={35}
-              style={styles.star}
-              color={
-                item.id !== '' && item.id <= selectedStarId
-                  ? globalColors.yellow
-                  : globalColors.lightGray
-              }
-            />
-          </TouchableOpacity>
-        )}
-      />
-    </View>
+    <FlatList
+      contentContainerStyle={{
+        ...styles.starsListContainer,
+        ...(containerStyle as any),
+      }}
+      horizontal
+      data={starsList}
+      keyExtractor={item => `${item.id}`}
+      renderItem={({item}) => (
+        <TouchableOpacity
+          disabled={staticBehaviour}
+          onPress={() => handleStarPressed(item)}
+          activeOpacity={0.9}>
+          <Icon
+            name="star"
+            size={iconSize}
+            style={{marginRight: iconMargin}}
+            color={
+              item.id !== '' && item.id <= selectedStarId
+                ? globalColors.yellow
+                : globalColors.lightGray
+            }
+          />
+        </TouchableOpacity>
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   starsListContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  star: {
-    marginHorizontal: 5,
   },
 });
