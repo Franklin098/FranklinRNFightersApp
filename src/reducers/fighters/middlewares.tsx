@@ -17,7 +17,11 @@ export function callFightersAPI(universe: string) {
       const resp = await fightersApi.get<Fighter[]>('/fighters', {
         params,
       });
-      dispatch(fetchFightersSuccess({list: resp.data}));
+      // filter unvalid items with objectId equals "NaN"
+      const unfilteredFighterList = resp.data;
+      const figherList = unfilteredFighterList.filter(fighter =>fighter.objectID != "NaN");
+      // dispatch sucess action
+      dispatch(fetchFightersSuccess({list: figherList}));
     } catch (error) {
       console.log('Error calling /fighters API', error);
       dispatch(fetchFightersFailed());
